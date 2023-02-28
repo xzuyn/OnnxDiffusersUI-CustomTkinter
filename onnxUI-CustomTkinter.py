@@ -190,6 +190,7 @@ def run_txt2img(
         seed,
         model_name,
 ):
+    global pipe
     global scheduler
 
     provider = "DmlExecutionProvider"
