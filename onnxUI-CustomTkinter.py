@@ -250,8 +250,8 @@ def run_txt2img(
             model_path,
             provider,
             scheduler,
-            True,
-            True
+            False,
+            False,
         )
 
     # modifying the methods in the pipeline object
