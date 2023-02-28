@@ -1,3 +1,5 @@
+import random
+
 import customtkinter as ctk
 import functools
 import PIL
@@ -8,7 +10,8 @@ import os
 import re
 import gc
 import lpw_pipe
-import pythread as pt
+import threading
+import time
 
 from diffusers import (
     OnnxRuntimeModel,
@@ -317,7 +320,7 @@ def run_txt2img(
     generated_image[0].save(
         os.path.join(
             output_path,
-            "testimage.png"
+            f"{str(random.randint(1, 9999999))}.png"
         ),
         optimize=True,
     )
@@ -332,12 +335,23 @@ window.geometry("1280x720")
 
 # widgets
 
+# model input
+model_input_label = ctk.CTkLabel(
+    window,
+    text="model folder name",
+)
+model_input = ctk.CTkTextbox(window, height=16, width=512)
+model_input.insert("0.0", "1_PhotoMerge_v1-2_MaxSlicing_Optimized_ft_mse_onnx-fp16")
+model_input_label.pack()
+model_input.pack()
+
 # txt2img prompt
 txt2img_prompt_label = ctk.CTkLabel(
     window,
     text="prompt",
 )
-txt2img_prompt = ctk.CTkTextbox(window)
+txt2img_prompt = ctk.CTkTextbox(window, width=640)
+txt2img_prompt.insert("0.0", "a photo of a mountain")
 txt2img_prompt_label.pack()
 txt2img_prompt.pack()
 
@@ -347,7 +361,15 @@ txt2img_neg_prompt_label = ctk.CTkLabel(
     text="negative prompt",
 )
 txt2img_neg_prompt_label.pack()
-txt2img_neg_prompt = ctk.CTkTextbox(window)
+txt2img_neg_prompt = ctk.CTkTextbox(window, width=640)
+txt2img_neg_prompt.insert(
+    "0.0",
+    "((watermark, signature, logo, text)), "
+    "lowres, ((monochrome, grayscale)), "
+    "(blurry), ugly, (blur), disfigured, "
+    "oversaturated, mutilated, cropped, "
+    "((people, person, human, humans, boy, girl, man, woman, hand, hands, finger, fingers))"
+)
 txt2img_neg_prompt.pack()
 
 # txt2img step count slider
@@ -360,38 +382,27 @@ txt2img_step_slider = ctk.CTkSlider(
     from_=1,
     to=32,
     number_of_steps=32,
+    width=512,
 )
 txt2img_step_slider_label.pack()
 txt2img_step_slider.pack()
-
-# txt2img guidance scale slider
-# txt2img_guidance_slider_label = ctk.CTkLabel(
-#     window,
-#     text=f"guidance scale",
-# )
-# txt2img_guidance_slider = ctk.CTkSlider(
-#     window,
-#     from_=2,
-#     to=50,
-#     number_of_steps=49,
-# )
-# txt2img_guidance_slider_label.pack()
-# txt2img_guidance_slider.pack()
 
 button = ctk.CTkButton(
     window,
     text="Generate",
     fg_color="blue",
     text_color="white",
-    command=lambda: run_txt2img(
-        txt2img_prompt.get("1.0", "end-1c"),
-        txt2img_neg_prompt.get("1.0", "end-1c"),
-        txt2img_step_slider.get(),
-        3.5,
-        "DEIS",
-        "",
-        "1_PhotoMerge_v1-2_MaxSlicing_Optimized_ft_mse_onnx-fp16"
-    ),
+    command=lambda: threading.Thread(
+        target=run_txt2img(
+            txt2img_prompt.get("1.0", "end-1c"),
+            txt2img_neg_prompt.get("1.0", "end-1c"),
+            txt2img_step_slider.get(),
+            3.5,
+            "DEIS",
+            "",
+            model_input.get("1.0", "end-1c"),
+        )
+    ).start()
 )
 button.pack()
 
