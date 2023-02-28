@@ -358,25 +358,25 @@ txt2img_step_slider_label = ctk.CTkLabel(
 txt2img_step_slider = ctk.CTkSlider(
     window,
     from_=1,
-    to=8,
-    number_of_steps=8,
+    to=32,
+    number_of_steps=32,
 )
 txt2img_step_slider_label.pack()
 txt2img_step_slider.pack()
 
 # txt2img guidance scale slider
-txt2img_guidance_slider_label = ctk.CTkLabel(
-    window,
-    text=f"guidance scale",
-)
-txt2img_guidance_slider = ctk.CTkSlider(
-    window,
-    from_=2,
-    to=50,
-    number_of_steps=49,
-)
-txt2img_guidance_slider_label.pack()
-txt2img_guidance_slider.pack()
+# txt2img_guidance_slider_label = ctk.CTkLabel(
+#     window,
+#     text=f"guidance scale",
+# )
+# txt2img_guidance_slider = ctk.CTkSlider(
+#     window,
+#     from_=2,
+#     to=50,
+#     number_of_steps=49,
+# )
+# txt2img_guidance_slider_label.pack()
+# txt2img_guidance_slider.pack()
 
 button = ctk.CTkButton(
     window,
@@ -387,7 +387,7 @@ button = ctk.CTkButton(
         txt2img_prompt.get("1.0", "end-1c"),
         txt2img_neg_prompt.get("1.0", "end-1c"),
         txt2img_step_slider.get(),
-        txt2img_guidance_slider.get(),
+        3.5,
         "DEIS",
         "",
         "1_PhotoMerge_v1-2_MaxSlicing_Optimized_ft_mse_onnx-fp16"
