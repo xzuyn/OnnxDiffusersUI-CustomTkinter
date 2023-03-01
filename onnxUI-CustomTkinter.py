@@ -1,6 +1,6 @@
 import random
-
 import customtkinter as ctk
+import tkinter as tk
 import functools
 import PIL
 from PIL import Image
@@ -325,13 +325,19 @@ def run_txt2img(
         optimize=True,
     )
 
+    txt2img_result_image.configure(
+        light_image=generated_image[0],
+        dark_image=generated_image[0],
+        size=(512, 512)
+    )
+
     gc.collect()
 
 
 # window
 window = ctk.CTk()
 window.title("OnnxDiffusersUI")
-window.geometry("1280x720")
+window.geometry("1288x536")
 
 # widgets
 
@@ -340,28 +346,27 @@ model_input_label = ctk.CTkLabel(
     window,
     text="model folder name",
 )
-model_input = ctk.CTkTextbox(window, height=16, width=512)
+model_input = ctk.CTkTextbox(window, height=16, width=736)
 model_input.insert("0.0", "1_PhotoMerge_v1-2_MaxSlicing_Optimized_ft_mse_onnx-fp16")
-model_input_label.pack()
-model_input.pack()
+model_input_label.place(x=32, y=0)
+model_input.place(x=16, y=25)
 
 # txt2img prompt
 txt2img_prompt_label = ctk.CTkLabel(
     window,
     text="prompt",
 )
-txt2img_prompt = ctk.CTkTextbox(window, width=640)
+txt2img_prompt = ctk.CTkTextbox(window, width=736, height=128)
 txt2img_prompt.insert("0.0", "a photo of a mountain")
-txt2img_prompt_label.pack()
-txt2img_prompt.pack()
+txt2img_prompt_label.place(x=32, y=55)
+txt2img_prompt.place(x=16, y=80)
 
 # txt2img negative prompt
 txt2img_neg_prompt_label = ctk.CTkLabel(
     window,
     text="negative prompt",
 )
-txt2img_neg_prompt_label.pack()
-txt2img_neg_prompt = ctk.CTkTextbox(window, width=640)
+txt2img_neg_prompt = ctk.CTkTextbox(window, width=736, height=128)
 txt2img_neg_prompt.insert(
     "0.0",
     "((watermark, signature, logo, text)), "
@@ -370,7 +375,8 @@ txt2img_neg_prompt.insert(
     "oversaturated, mutilated, cropped, "
     "((people, person, human, humans, boy, girl, man, woman, hand, hands, finger, fingers))"
 )
-txt2img_neg_prompt.pack()
+txt2img_neg_prompt_label.place(x=32, y=210)
+txt2img_neg_prompt.place(x=16, y=235)
 
 # txt2img step count slider
 txt2img_step_slider_label = ctk.CTkLabel(
@@ -382,10 +388,10 @@ txt2img_step_slider = ctk.CTkSlider(
     from_=1,
     to=32,
     number_of_steps=32,
-    width=512,
+    width=736,
 )
-txt2img_step_slider_label.pack()
-txt2img_step_slider.pack()
+txt2img_step_slider_label.place(x=32, y=365)
+txt2img_step_slider.place(x=16, y=390)
 
 button = ctk.CTkButton(
     window,
@@ -402,9 +408,27 @@ button = ctk.CTkButton(
             "",
             model_input.get("1.0", "end-1c"),
         )
-    ).start()
+    ).start(),
+    width=736,
+    height=64,
 )
-button.pack()
+button.place(x=16, y=450)
+
+# txt2img result
+txt2img_result_image = ctk.CTkImage(
+    light_image=Image.open("./ui_images/transparent_image.png"),
+    dark_image=Image.open("./ui_images/transparent_image.png"),
+    size=(512, 512)
+)
+txt2img_result_button = ctk.CTkButton(
+    window,
+    image=txt2img_result_image,
+    fg_color="transparent",
+    hover=False,
+    state="disabled",
+    text="",
+)
+txt2img_result_button.place(x=756, y=8)
 
 
 # variables to set before running
