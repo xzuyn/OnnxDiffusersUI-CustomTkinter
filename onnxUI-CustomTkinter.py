@@ -334,10 +334,28 @@ def run_txt2img(
     gc.collect()
 
 
+def run_thread_txt2img():
+    run_txt2img(
+        txt2img_prompt.get("1.0", "end-1c"),
+        txt2img_neg_prompt.get("1.0", "end-1c"),
+        txt2img_step_slider.get(),
+        3.5,
+        "DEIS",
+        "",
+        model_input.get("1.0", "end-1c"),
+    )
+
+
+def create_txt2img_thread():
+    thread = threading.Thread(target=run_thread_txt2img)
+    thread.start()
+
+
 # window
 window = ctk.CTk()
 window.title("OnnxDiffusersUI")
 window.geometry("1288x536")
+window.resizable(False, False)
 
 # widgets
 
@@ -398,17 +416,7 @@ button = ctk.CTkButton(
     text="Generate",
     fg_color="blue",
     text_color="white",
-    command=lambda: threading.Thread(
-        target=run_txt2img(
-            txt2img_prompt.get("1.0", "end-1c"),
-            txt2img_neg_prompt.get("1.0", "end-1c"),
-            txt2img_step_slider.get(),
-            3.5,
-            "DEIS",
-            "",
-            model_input.get("1.0", "end-1c"),
-        )
-    ).start(),
+    command=create_txt2img_thread,
     width=736,
     height=64,
 )
